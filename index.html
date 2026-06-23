@@ -4,141 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um Convite Especial - Pedro Miguel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Times New Roman', Times, serif;
-            background: radial-gradient(circle at center, #ffffff 0%, #e6effa 100%);
-            color: #2c3e50; overflow: hidden;
+            font-family: 'Fredoka', sans-serif;
+            background-color: #0d1b2a; /* Azul Meia-Noite */
+            color: #ffffff; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 2s ease;
         }
 
-        /* Moldura Dourada de Luxo */
-        .gold-border {
-            position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 8px; pointer-events: none; z-index: 10;
+        body.invite-active {
+            background-color: #dceefb; /* Azul Bebé Claro */
         }
 
-        .overlay {
-            position: relative; z-index: 2; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 40px 24px; text-align: center;
-        }
-
-        /* Ecrã de Boas-Vindas */
-        .welcome-screen {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            height: 100%; gap: 20px; z-index: 5;
-        }
-        .welcome-title {
-            font-size: 14px; letter-spacing: 5px; text-transform: uppercase; color: #b39243; font-weight: bold;
-        }
-        .welcome-heading {
-            font-size: 28px; font-weight: 300; color: #1a365d; margin: 10px 0;
-        }
-        .welcome-sub {
-            font-size: 14px; font-style: italic; color: #7f8c8d; max-width: 260px; line-height: 1.6;
-        }
-
-        /* Carrossel de Fotos Emocionais ao Fundo */
+        /* Estrutura das Imagens de Fundo */
         .photo-background {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; opacity: 0; transition: opacity 1.5s ease-in-out;
-            background-size: cover; background-position: center;
+            z-index: 1; background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1.5s ease-in-out;
         }
-        .photo-background.active { opacity: 0.18; } /* Opacidade suave para não atrapalhar a leitura */
+        .photo-background.active { opacity: 0.5; }
 
-        .main-content { max-width: 340px; width: 100%; margin: auto 0; z-index: 3; display: none; }
+        /* Névoa de Leitura */
+        .overlay-mist {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+            background: rgba(13, 27, 42, 0.85);
+            transition: background 2s ease;
+        }
+        body.invite-active .overlay-mist {
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, rgba(220, 238, 251, 0.85) 100%);
+        }
+
+        .interface {
+            position: relative; z-index: 3; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; padding: 60px 24px; text-align: center;
+        }
+
+        .welcome-screen {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100%; gap: 30px;
+        }
+        .welcome-heading {
+            font-size: 26px; font-weight: 400; line-height: 1.5; color: #ffffff; max-width: 290px;
+        }
+
+        .main-content { max-width: 340px; width: 100%; margin: auto 0; display: none; }
         
-        /* Balão de Texto do Bebé (Vidro Fosco Infantil) */
-        .story-box {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            padding: 30px 22px; width: 100%; border-radius: 16px;
-            font-size: 17px; line-height: 2.2; font-style: italic; color: #2c3e50;
-            box-shadow: 0 10px 30px rgba(179, 211, 234, 0.3);
-            min-height: 220px; display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
+        .story-display {
+            font-size: 19px; line-height: 1.9; color: #ffffff; font-weight: 400;
+            min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease; padding: 0 10px;
+        }
+        body.invite-active .story-display {
+            color: #1a365d;
+            text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.6);
         }
 
-        /* Botões Estilo Realeza */
-        .btn-gold {
-            background: linear-gradient(135deg, #dfba6b 0%, #b39243 100%);
-            color: #ffffff; border: none; padding: 16px 35px;
-            font-size: 11px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
-            border-radius: 30px; transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(179, 146, 67, 0.3);
+        .btn-action {
+            background: #ffffff; color: #0d1b2a; border: none; padding: 16px 36px;
+            font-size: 12px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            border-radius: 40px; font-weight: 500; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(179, 146, 67, 0.4); }
+        .btn-action:hover { transform: scale(1.03); }
 
-        .logo-p {
-            font-size: 32px; color: #b39243; font-family: 'Times New Roman', serif;
-            border: 1px solid #b39243; width: 60px; height: 60px; display: flex;
-            align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 10px;
-            background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        body.invite-active .btn-action {
+            background: #1a365d; color: #ffffff;
+            box-shadow: 0 4px 15px rgba(26, 54, 93, 0.3);
+        }
+
+        .btn-restart {
+            background: transparent; color: #1a365d; border: 2px solid #1a365d;
+            padding: 12px 28px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+            border-radius: 30px; cursor: pointer; margin-top: 20px; font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <!-- Música de Embalar Infantil Terapêutica (Caixa de Música) -->
     <audio id="kids-audio" loop>
-        <source src="https://assets.mixkit.co/active_storage/sfx/1993/1993-84.wav" type="audio/wav">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="musica.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="gold-border"></div>
+    <div id="bg-photo-1" class="photo-background" style="background-image: url('https://images.pexels.com/photos/30478363/pexels-photo-30478363.jpeg?auto=compress&cs=tinysrgb&w=600');"></div> <div id="bg-photo-2" class="photo-background" style="background-image: url('https://images.pexels.com/photos/9823486/pexels-photo-9823486.jpeg?auto=compress&cs=tinysrgb&w=600');"></div>
+    <div id="bg-photo-3" class="photo-background" style="background-image: url('https://images.pexels.com/photos/9823499/pexels-photo-9823499.jpeg?auto=compress&cs=tinysrgb&w=600');"></div>
+    <div id="bg-photo-4" class="photo-background" style="background-image: url('https://images.pexels.com/photos/9823485/pexels-photo-9823485.jpeg?auto=compress&cs=tinysrgb&w=600');"></div>
+    <div id="bg-photo-5" class="photo-background" style="background-image: url('https://images.pexels.com/photos/9823487/pexels-photo-9823487.jpeg?auto=compress&cs=tinysrgb&w=600');"></div>
+    <div id="bg-photo-6" class="photo-background" style="background-image: url('https://images.pexels.com/photos/9823513/pexels-photo-9823513.jpeg?auto=compress&cs=tinysrgb&w=600');"></div> <div class="overlay-mist"></div>
 
-    <!-- Fotos de fundo que mudam com a história -->
-    <div id="bg-photo-1" class="photo-background active" style="background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77ebd?q=80&w=600');"></div>
-    <div id="bg-photo-2" class="photo-background" style="background-image: url('https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=600');"></div>
-    <div id="bg-photo-3" class="photo-background" style="background-image: url('https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=600');"></div>
-    <div id="bg-photo-4" class="photo-background" style="background-image: url('https://images.unsplash.com/photo-1442458370899-ae20e367c5d8?q=80&w=600');"></div>
-
-    <div class="overlay">
+    <div class="interface">
         
-        <!-- Ecrã de Entrada -->
         <div id="welcome-area" class="welcome-screen">
-            <div class="logo-p">P</div>
-            <div class="welcome-title">Moulage Atelier</div>
-            <h2 class="welcome-heading">Olá, Padrinho Rui!</h2>
-            <p class="welcome-sub">O Pedro Miguel preparou uma surpresa mágica no interior desta chama. Está pronto para abrir?</p>
-            <button class="btn-gold" onclick="abrirConvite()">Abrir o Convite</button>
+            <h2 class="welcome-heading">Tio Pedro, tenho um convite especial para você...</h2>
+            <button class="btn-action" onclick="abrirConvite()">Aceitar Convite</button>
         </div>
 
-        <!-- Ecrã da História Dinâmica -->
         <div id="content-area" class="main-content">
-            <div id="story-text" class="story-box">
-                A carregar as minhas primeiras memórias...
-            </div>
+            <div id="story-text" class="story-display"></div>
+            <div id="action-area" style="display: none;"></div>
         </div>
 
     </div>
 
     <script>
         const frasesPedro = [
-            "Oi Padrinho Rui Pinto! Estou tão feliz por você ter sido o escolhido para esta missão tão especial na minha vida. Eu e os meus pais estamos com o coração cheio de amor e gratidão.",
-            "Eu já estou empolgado para crescer logo, aprender a andar e corrermos juntos para muitas brincadeiras! Sei que ao teu lado vou aprender coisas incríveis.",
-            "O meu batizado vai ser no dia 21-08-2026 e eu te espero lá com o teu melhor abraço! Acenda esta velinha linda para aquecer o seu coração e guarde este potinho com todo o carinho como recordação.",
-            "Nos vemos em breve, Padrinho! Mas olha... se a saudade apertar, pode passar lá em casa antes para me dar um beijinho bem gostoso! <br><br><strong>Com amor, Pedro Miguel.</strong>"
+            "O Papai e a Mamãe querem falar primeiro...<br><br>Escolhemos você para guiar os passos do nosso pequeno(a) durante toda a sua vida, seguindo sempre os ensinamentos de Deus.",
+            "Agora eu...<br><br>Me disseram que padrinhos são anjos com quem posso rir e chorar. Que me manterão em pé quando minhas asas não souberem mais como voar.",
+            "Por esse motivo, com todo amor e carinho, eles escolheram você para ser meu padrinho.",
+            "Estou ansioso para poder crescer logo e ser seu amigo nas suas aventuras, a mamãe disse que serás o meu melhor amigo!",
+            "O meu batizado vai ser no dia 30-10-2026, até lá eu irei avaliar o seu comportamento para ver se te subo de escalão de TIO PREFERIDO para PADRINHO PREFERIDO! haha",
+            "Aceita o convite?<br>Se sim, acenda a velinha!<br>Te espero lá!<br><br>Um beijinho grande de nossa Família."
         ];
 
         let indiceEtapa = 0;
-        let timerFotos = null;
+        let timerFluxo = null;
 
         function abrirConvite() {
-            // Inicia a caixinha de música de fundo
             const musica = document.getElementById('kids-audio');
-            musica.volume = 0.4;
-            musica.play().catch(e => console.log("Áudio ativado"));
+            musica.volume = 0.5; 
+            musica.play().catch(e => console.log("Áudio ativado."));
 
-            // Transição de ecrãs
+            document.body.classList.add('invite-active');
+
             document.getElementById('welcome-area').style.display = "none";
             document.getElementById('content-area').style.display = "block";
             
+            indiceEtapa = 0;
             fluxoConto();
         }
 
@@ -147,24 +143,43 @@
             
             if (indiceEtapa < frasesPedro.length) {
                 display.style.opacity = 0;
-                mudarFotoFundo(indiceEtapa + 1);
                 
+                // Ativa a imagem correspondente ao índice do texto atual de forma imediata
+                mudarFotoFundo(indiceEtapa + 1);
+
                 setTimeout(() => {
                     display.innerHTML = frasesPedro[indiceEtapa];
                     display.style.opacity = 1;
                     indiceEtapa++;
-                    // Cada parte da carta fica 10 segundos para o padrinho ler com emoção
-                    timerFotos = setTimeout(fluxoConto, 10500);
+                    // 11 segundos para leitura calma
+                    timerFluxo = setTimeout(fluxoConto, 11000);
                 }, 800);
+            } else {
+                const areaAcao = document.getElementById('action-area');
+                areaAcao.innerHTML = `<button class="btn-action btn-restart" onclick="voltarAoInicio()">Ver Novamente?</button>`;
+                areaAcao.style.display = "block";
             }
         }
 
         function mudarFotoFundo(numeroFoto) {
-            // Remove a classe ativa de todas as fotos
             document.querySelectorAll('.photo-background').forEach(el => el.classList.remove('active'));
-            // Adiciona à foto atual
             const fotoAlvo = document.getElementById(`bg-photo-${numeroFoto}`);
             if (fotoAlvo) fotoAlvo.classList.add('active');
+        }
+
+        function voltarAoInicio() {
+            clearTimeout(timerFluxo);
+            const musica = document.getElementById('kids-audio');
+            musica.pause();
+            musica.currentTime = 0;
+
+            document.body.classList.remove('invite-active');
+            document.querySelectorAll('.photo-background').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('welcome-area').style.display = "flex";
+            document.getElementById('content-area').style.display = "none";
+            document.getElementById('action-area').style.display = "none";
+            document.getElementById('story-text').innerHTML = "";
         }
     </script>
 </body>
